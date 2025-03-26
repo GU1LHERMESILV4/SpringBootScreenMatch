@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### IGNORAR ###
+.env
+config.properties
+application.properties
+application.yml
+
