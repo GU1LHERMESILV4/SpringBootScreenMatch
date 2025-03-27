@@ -12,12 +12,14 @@ public class ConsultaChatGPT {
     public static String obterResposta(String pergunta) {
         if (API_KEY == null || API_KEY.isBlank()) {
             throw new IllegalStateException("Chave da API não encontrada! Defina a variável de ambiente OPENAI_API_KEY.");
+        } else {
+            System.out.println("Variável de ambiente encontrada! Primeiros caracteres da chave: " + API_KEY.substring(0, 5) + "...");
         }
 
         OpenAiService service = new OpenAiService(API_KEY);
 
         ChatCompletionRequest requisicao = ChatCompletionRequest.builder()
-                .model("gpt-4o") // Modelo atualizado
+                .model("gpt-4o")
                 .messages(Collections.singletonList(new ChatMessage("user", pergunta)))
                 .build();
 
