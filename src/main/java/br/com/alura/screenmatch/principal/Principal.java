@@ -5,37 +5,32 @@ import br.com.alura.screenmatch.model.DadosTemporada;
 import br.com.alura.screenmatch.model.Serie;
 import br.com.alura.screenmatch.service.ConsumoApi;
 import br.com.alura.screenmatch.service.ConverteDados;
-import br.com.alura.screenmatch.service.SerieService;
-import br.com.alura.screenmatch.service.traducao.TranslationService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Principal {
 
-    private final Scanner leitura = new Scanner(System.in);
-    private final ConsumoApi consumo = new ConsumoApi();
-    private final ConverteDados conversor = new ConverteDados();
-    private final SerieService serieService;
+    private Scanner leitura = new Scanner(System.in);
+    private ConsumoApi consumo = new ConsumoApi();
+    private ConverteDados conversor = new ConverteDados();
     private final String ENDERECO = "https://www.omdbapi.com/?t=";
-    private final String API_KEY = "&apikey=918ea8e";
-    private final List<DadosSerie> dadosSeries = new ArrayList<>();
-
-    // 🔹 Agora recebe SerieService no construtor
-    public Principal(SerieService serieService) {
-        this.serieService = serieService;
-    }
+    private final String API_KEY = "&apikey=6585022c";
+    private List<DadosSerie> dadosSeries = new ArrayList<>();
 
     public void exibeMenu() {
-        int opcao = -1;
-        while (opcao != 0) {
-            String menu = """
-                1 - Buscar séries
-                2 - Buscar episódios
-                3 - Listar séries buscadas
-                
-                0 - Sair                                 
-                """;
+        var opcao = -1;
+        while(opcao != 0) {
+            var menu = """
+                    1 - Buscar séries
+                    2 - Buscar episódios
+                    3 - Listar séries buscadas
+                                    
+                    0 - Sair                                 
+                    """;
 
             System.out.println(menu);
             opcao = leitura.nextInt();
@@ -49,7 +44,7 @@ public class Principal {
                     buscarEpisodioPorSerie();
                     break;
                 case 3:
-                    listarSeriesBuscadas(); // 🔹 Agora o método não precisa de parâmetro
+                    listarSeriesBuscadas();
                     break;
                 case 0:
                     System.out.println("Saindo...");
@@ -67,39 +62,32 @@ public class Principal {
     }
 
     private DadosSerie getDadosSerie() {
-        System.out.println("Digite o nome da série para busca:");
-        String nomeSerie = leitura.nextLine();
-        String json = consumo.obterDados(ENDERECO + nomeSerie.replace(" ", "+") + API_KEY);
-        return conversor.obterDados(json, DadosSerie.class);
+        System.out.println("Digite o nome da série para busca");
+        var nomeSerie = leitura.nextLine();
+        var json = consumo.obterDados(ENDERECO + nomeSerie.replace(" ", "+") + API_KEY);
+        DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
+        return dados;
     }
 
-    private void buscarEpisodioPorSerie() {
+    private void buscarEpisodioPorSerie(){
         DadosSerie dadosSerie = getDadosSerie();
         List<DadosTemporada> temporadas = new ArrayList<>();
 
         for (int i = 1; i <= dadosSerie.totalTemporadas(); i++) {
-            String json = consumo.obterDados(ENDERECO + dadosSerie.titulo().replace(" ", "+") + "&season=" + i + API_KEY);
+            var json = consumo.obterDados(ENDERECO + dadosSerie.titulo().replace(" ", "+") + "&season=" + i + API_KEY);
             DadosTemporada dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
             temporadas.add(dadosTemporada);
         }
         temporadas.forEach(System.out::println);
     }
 
-    private void listarSeriesBuscadas() {
-        List<Serie> series = dadosSeries.stream()
-                .map(serieService::criarSerie) // 🔹 Usando SerieService para criar Series corretamente
+    private void listarSeriesBuscadas(){
+        List<Serie> series = new ArrayList<>();
+        series = dadosSeries.stream()
+                .map(d -> new Serie(d))
                 .collect(Collectors.toList());
-
         series.stream()
                 .sorted(Comparator.comparing(Serie::getGenero))
                 .forEach(System.out::println);
     }
-
-    public static void main(String[] args) {
-        TranslationService translationService = new TranslationService();
-        SerieService serieService = new SerieService(translationService);
-        Principal principal = new Principal(serieService);
-        principal.exibeMenu();
-    }
-
 }

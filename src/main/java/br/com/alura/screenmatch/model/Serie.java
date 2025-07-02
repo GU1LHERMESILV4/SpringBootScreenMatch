@@ -1,9 +1,9 @@
 package br.com.alura.screenmatch.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import br.com.alura.screenmatch.service.ConsultaChatGPT;
+
 import java.util.OptionalDouble;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Serie {
     private String titulo;
     private Integer totalTemporadas;
@@ -13,14 +13,14 @@ public class Serie {
     private String poster;
     private String sinopse;
 
-    public Serie(DadosSerie dadosSerie, String sinopseTraduzida) {
+    public Serie(DadosSerie dadosSerie){
         this.titulo = dadosSerie.titulo();
         this.totalTemporadas = dadosSerie.totalTemporadas();
         this.avaliacao = OptionalDouble.of(Double.valueOf(dadosSerie.avaliacao())).orElse(0);
         this.genero = Categoria.fromString(dadosSerie.genero().split(",")[0].trim());
         this.atores = dadosSerie.atores();
         this.poster = dadosSerie.poster();
-        this.sinopse = sinopseTraduzida;
+        this.sinopse = ConsultaChatGPT.obterTraducao(dadosSerie.sinopse()).trim();
     }
 
     public String getTitulo() {
@@ -81,12 +81,14 @@ public class Serie {
 
     @Override
     public String toString() {
-        return  ", genero=" + genero +
-                "titulo='" + titulo + '\'' +
-                ", totalTemporadas=" + totalTemporadas +
-                ", avaliacao=" + avaliacao +
-                ", atores='" + atores + '\'' +
-                ", poster='" + poster + '\'' +
-                ", sinopse='" + sinopse + '\'';
+        return
+                "genero=" + genero +
+                        ", titulo='" + titulo + '\'' +
+                        ", totalTemporadas=" + totalTemporadas +
+                        ", avaliacao=" + avaliacao +
+
+                        ", atores='" + atores + '\'' +
+                        ", poster='" + poster + '\'' +
+                        ", sinopse='" + sinopse + '\'';
     }
 }

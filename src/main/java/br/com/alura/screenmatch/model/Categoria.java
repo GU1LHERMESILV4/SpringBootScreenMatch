@@ -2,25 +2,14 @@ package br.com.alura.screenmatch.model;
 
 public enum Categoria {
     ACAO("Action"),
-    AVENTURA("Adventure"),
-    ANIMACAO("Animation"),
-    COMEDIA("Comedy"),
-    CRIME("Crime"),
-    DOCUMENTARIO("Documentary"),
-    DRAMA("Drama"),
-    FANTASIA("Fantasy"),
-    FICCAO_CIENTIFICA("Sci-Fi"),
-    TERROR("Horror"),
     ROMANCE("Romance"),
-    SUSPENSE("Thriller"),
-    MUSICAL("Musical"),
-    GUERRA("War"),
-    MISTERIO("Mystery"),
-    FAROESTE("Western");
+    COMEDIA("Comedy"),
+    DRAMA("Drama"),
+    CRIME("Crime");
 
-    private final String categoriaOmdb;
+    private String categoriaOmdb;
 
-    Categoria(String categoriaOmdb) {
+    Categoria(String categoriaOmdb){
         this.categoriaOmdb = categoriaOmdb;
     }
 
